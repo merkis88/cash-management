@@ -81,11 +81,11 @@ class CashFlowRecord(models.Model):
         ordering = ["-created_at", "-id"]
 
     def __str__(self) -> str:
-        return f"{self.created_at} — {self.type} — {self.amount} ₽"
+        return f"{self.created_at} — {self.operation_type} — {self.amount} ₽"
 
     def clean(self) -> None:
-        if self.category_id and self.type_id:
-            if self.category.operation_type_id != self.type_id:
+        if self.category_id and self.operation_type_id:
+            if self.category.operation_type_id != self.operation_type_id:
                 raise ValidationError(
                     {
                         "category": "Категория не относится к выбранному типу операции."
