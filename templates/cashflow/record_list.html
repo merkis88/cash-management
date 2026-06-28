@@ -103,17 +103,11 @@
                             {% endif %}
                         </td>
                         <td class="text-end">
-                            <a
-                                href="{% url 'cashflow:record_update' record.pk %}"
-                                class="btn btn-sm btn-outline-primary"
-                            >
+                            <a href="{% url 'cashflow:record_update' record.pk %}" class="btn btn-sm btn-outline-primary">
                                 Изменить
                             </a>
 
-                            <a
-                                href="{% url 'cashflow:record_delete' record.pk %}"
-                                class="btn btn-sm btn-outline-danger"
-                            >
+                            <a href="{% url 'cashflow:record_delete' record.pk %}" class="btn btn-sm btn-outline-danger">
                                 Удалить
                             </a>
                         </td>
