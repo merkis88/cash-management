@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Справочники{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">Справочники</h1>
+        <p class="text-muted mb-0">
+            Управление статусами, типами операций, категориями и подкатегориями
+        </p>
+    </div>
+
+    <a href="{% url 'cashflow:record_list' %}" class="btn btn-outline-secondary">
+        К записям
+    </a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Статусы</span>
+
+                <a href="{% url 'cashflow:reference_create' 'statuses' %}" class="btn btn-sm btn-primary">
+                    Добавить
+                </a>
+            </div>
+
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th class="text-end">Действия</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for status in statuses %}
+                            <tr>
+                                <td>{{ status.name }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'cashflow:reference_update' 'statuses' status.pk %}" class="btn btn-sm btn-outline-primary">
+                                        Изменить
+                                    </a>
+
+                                    <a href="{% url 'cashflow:reference_delete' 'statuses' status.pk %}" class="btn btn-sm btn-outline-danger">
+                                        Удалить
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted py-3">
+                                    Статусов пока нет
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Типы операций</span>
+
+                <a
+                    href="{% url 'cashflow:reference_create' 'operation-types' %}"
+                    class="btn btn-sm btn-primary"
+                >
+                    Добавить
+                </a>
+            </div>
+
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th class="text-end">Действия</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for operation_type in operation_types %}
+                            <tr>
+                                <td>{{ operation_type.name }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'cashflow:reference_update' 'operation-types' operation_type.pk %}" class="btn btn-sm btn-outline-primary">
+                                        Изменить
+                                    </a>
+
+                                    <a href="{% url 'cashflow:reference_delete' 'operation-types' operation_type.pk %}" class="btn btn-sm btn-outline-danger">
+                                        Удалить
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="2" class="text-center text-muted py-3">
+                                    Типов операций пока нет
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Категории</span>
+
+                <a href="{% url 'cashflow:reference_create' 'categories' %}" class="btn btn-sm btn-primary">
+                    Добавить
+                </a>
+            </div>
+
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Тип операции</th>
+                            <th class="text-end">Действия</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for category in categories %}
+                            <tr>
+                                <td>{{ category.name }}</td>
+                                <td>{{ category.operation_type }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'cashflow:reference_update' 'categories' category.pk %}" class="btn btn-sm btn-outline-primary">
+                                        Изменить
+                                    </a>
+
+                                    <a href="{% url 'cashflow:reference_delete' 'categories' category.pk %}" class="btn btn-sm btn-outline-danger">
+                                        Удалить
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">
+                                    Категорий пока нет
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Подкатегории</span>
+
+                <a href="{% url 'cashflow:reference_create' 'subcategories' %}" class="btn btn-sm btn-primary">
+                    Добавить
+                </a>
+            </div>
+
+            <div class="card-body p-0">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Категория</th>
+                            <th class="text-end">Действия</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for subcategory in subcategories %}
+                            <tr>
+                                <td>{{ subcategory.name }}</td>
+                                <td>{{ subcategory.category }}</td>
+                                <td class="text-end">
+                                    <a href="{% url 'cashflow:reference_update' 'subcategories' subcategory.pk %}" class="btn btn-sm btn-outline-primary">
+                                        Изменить
+                                    </a>
+
+                                    <a href="{% url 'cashflow:reference_delete' 'subcategories' subcategory.pk %}" class="btn btn-sm btn-outline-danger">
+                                        Удалить
+                                    </a>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-3">
+                                    Подкатегорий пока нет
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

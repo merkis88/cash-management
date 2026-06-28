@@ -1,10 +1,11 @@
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+from django.db.models import ProtectedError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CashFlowRecordFilterForm, CashFlowRecordForm
-from .models import CashFlowRecord, Category, SubCategory
-
+from .forms import (CashFlowRecordFilterForm, CashFlowRecordForm, CategoryForm, OperationTypeForm, StatusForm, SubCategoryForm)
+from .models import (CashFlowRecord, Category, OperationType, Status, SubCategory)
 
 def record_list(request):
     """
@@ -158,3 +159,125 @@ def subcategories_by_category(request):
     ]
 
     return JsonResponse({"results": data})
+
+REFERENCE_CONFIG = {
+    "statuses": {
+        "model": Status,
+        "form": StatusForm,
+        "title": "Статусы",
+        "single_title": "статус",
+    },
+    "operation-types": {
+        "model": OperationType,
+        "form": OperationTypeForm,
+        "title": "Типы операций",
+        "single_title": "тип операции",
+    },
+    "categories": {
+        "model": Category,
+        "form": CategoryForm,
+        "title": "Категории",
+        "single_title": "категорию",
+    },
+    "subcategories": {
+        "model": SubCategory,
+        "form": SubCategoryForm,
+        "title": "Подкатегории",
+        "single_title": "подкатегорию",
+    },
+}
+
+
+def get_reference_config(reference_type):
+    config = REFERENCE_CONFIG.get(reference_type)
+
+    if config is None:
+        raise PermissionDenied("Неизвестный тип справочника.")
+
+    return config
+
+
+def reference_list(request):
+    context = {
+        "statuses": Status.objects.all(),
+        "operation_types": OperationType.objects.all(),
+        "categories": Category.objects.select_related("operation_type").all(),
+        "subcategories": SubCategory.objects.select_related("category").all(),
+    }
+
+    return render(request, "cashflow/reference_list.html", context)
+
+
+def reference_create(request, reference_type):
+    config = get_reference_config(reference_type)
+    form_class = config["form"]
+
+    if request.method == "POST":
+        form = form_class(request.POST)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Справочник успешно обновлён.")
+            return redirect("cashflow:reference_list")
+    else:
+        form = form_class()
+
+    context = {
+        "form": form,
+        "title": f"Добавить {config['single_title']}",
+        "button_text": "Создать",
+    }
+
+    return render(request, "cashflow/reference_form.html", context)
+
+
+def reference_update(request, reference_type, pk):
+    config = get_reference_config(reference_type)
+    model = config["model"]
+    form_class = config["form"]
+
+    instance = get_object_or_404(model, pk=pk)
+
+    if request.method == "POST":
+        form = form_class(request.POST, instance=instance)
+
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Справочник успешно обновлён.")
+            return redirect("cashflow:reference_list")
+    else:
+        form = form_class(instance=instance)
+
+    context = {
+        "form": form,
+        "title": f"Редактировать {config['single_title']}",
+        "button_text": "Сохранить",
+    }
+
+    return render(request, "cashflow/reference_form.html", context)
+
+
+def reference_delete(request, reference_type, pk):
+    config = get_reference_config(reference_type)
+    model = config["model"]
+
+    instance = get_object_or_404(model, pk=pk)
+
+    if request.method == "POST":
+        try:
+            instance.delete()
+            messages.success(request, "Элемент справочника успешно удалён.")
+        except ProtectedError:
+            messages.error(
+                request,
+                "Нельзя удалить элемент справочника, потому что он уже используется в записях.",
+            )
+
+        return redirect("cashflow:reference_list")
+
+    context = {
+        "object": instance,
+        "title": f"Удалить {config['single_title']}",
+    }
+
+    return render(request, "cashflow/reference_confirm_delete.html", context)

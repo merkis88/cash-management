@@ -207,3 +207,82 @@ class CashFlowRecordFilterForm(forms.Form):
             }
         ),
     )
+
+class StatusForm(forms.ModelForm):
+    class Meta:
+        model = Status
+        fields = ["name"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Например: Бизнес",
+                }
+            )
+        }
+        labels = {
+            "name": "Название",
+        }
+
+
+class OperationTypeForm(forms.ModelForm):
+    class Meta:
+        model = OperationType
+        fields = ["name"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Например: Списание",
+                }
+            )
+        }
+        labels = {
+            "name": "Название",
+        }
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ["name", "operation_type"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Например: Маркетинг",
+                }
+            ),
+            "operation_type": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+        }
+        labels = {
+            "name": "Название",
+            "operation_type": "Тип операции",
+        }
+
+
+class SubCategoryForm(forms.ModelForm):
+    class Meta:
+        model = SubCategory
+        fields = ["name", "category"]
+        widgets = {
+            "name": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Например: Avito",
+                }
+            ),
+            "category": forms.Select(
+                attrs={
+                    "class": "form-select",
+                }
+            ),
+        }
+        labels = {
+            "name": "Название",
+            "category": "Категория",
+        }

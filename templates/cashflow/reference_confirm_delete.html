@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                Подтверждение удаления
+            </div>
+
+            <div class="card-body">
+                <h1 class="h4 mb-3">
+                    {{ title }}?
+                </h1>
+
+                <p class="text-muted">
+                    Если элемент уже используется в записях ДДС или связанных справочниках,
+                    система не позволит его удалить.
+                </p>
+
+                <div class="border rounded p-3 mb-4 bg-light">
+                    <strong>Элемент:</strong>
+                    {{ object }}
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            Удалить
+                        </button>
+
+                        <a href="{% url 'cashflow:reference_list' %}" class="btn btn-outline-secondary">
+                            Отмена
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
